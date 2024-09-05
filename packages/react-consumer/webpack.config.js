@@ -1,11 +1,16 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { ModuleFederationPlugin } = require("webpack").container;
-const deps = require("./package.json").dependencies;
-const path = require("path");
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import webpack from "webpack";
+import path from "path";
+import { fileURLToPath } from "url";
+const __dirname = fileURLToPath(import.meta.url);
 
-module.exports = {
+const { ModuleFederationPlugin } = webpack.container;
+export default {
   entry: "./src/index",
   mode: "development",
+  experiments: {
+    outputModule: true,
+  },
   devServer: {
     static: {
       directory: path.join(__dirname, "dist"),
@@ -14,6 +19,11 @@ module.exports = {
   },
   output: {
     publicPath: "auto",
+  },
+  resolve: {
+    alias: {
+      vue: "vue/dist/vue.esm-bundler.js",
+    },
   },
   module: {
     rules: [
@@ -29,24 +39,17 @@ module.exports = {
   },
   plugins: [
     new ModuleFederationPlugin({
+      library: { type: "module" },
       name: "react",
       remotes: {
-        vuebutton: "vuebutton@http://localhost:3001/remoteEntry.js",
-      },
-      shared: {
-        ...deps,
-        react: {
-          singleton: true,
-          requiredVersion: deps.react,
-        },
-        "react-dom": {
-          singleton: true,
-          requiredVersion: deps["react-dom"],
-        },
+        // layout: "http://localhost:3000/assets/remoteEntry.js",
+        layoutnuxt: "http://localhost:3000/_nuxt/remoteEntry.js",
       },
     }),
     new HtmlWebpackPlugin({
       template: "./src/index.html",
+      scriptLoading: "defer",
+      inject: false,
     }),
   ],
 };
