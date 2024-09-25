@@ -44,6 +44,8 @@ export default {
       remotes: {
         // layout: "http://localhost:3000/assets/remoteEntry.js",
         layoutnuxt: "http://localhost:3000/_nuxt/remoteEntry.js",
+        // layoutnuxt:
+        // "https://deploy-preview-1436--armani-production.netlify.app/_nuxt/remoteEntry.js",
       },
     }),
     new HtmlWebpackPlugin({
